@@ -129,8 +129,25 @@ for abstract_id, title_abstract in temp_t_a.iterrows():
     ]
     print(f'abstract_id: {abstract_id}')
 
-
 st.title('Métricas')
+
+# Mostrar gráfica de evaluación para los resultados, se eliminan las columnas de métricas
+results_df = evaluation_df.drop(['precision', 'recall', 'f1'], axis=1)
+st.subheader('Gráfico de barras agrupadas para frecuencias de resultados')
+results_chart = st.empty()
+results_chart_alt = alt.Chart(results_df).transform_fold(
+    ['correct_predictions', 'missed_predictions', 'false_predictions'],
+    as_=['result', 'value']
+).mark_bar().encode(
+    x=alt.X('result:N', axis=alt.Axis(title='Abstract ID')),
+    y=alt.Y('value:Q', axis=alt.Axis(title='Valor')),
+    color=alt.Color('result:N', legend=alt.Legend(title='Resultado')),
+    column=alt.Column('abstract_id:N', header=alt.Header(labelOrient='bottom', title='Abstract ID'))
+).properties(
+    width=50,
+    height=200
+)
+results_chart.altair_chart(results_chart_alt)
 
 # Mostrar gráfica de evaluación para las métricas, se eliminan las columnas de resultados
 metrics_df = evaluation_df.drop(['correct_predictions', 'missed_predictions', 'false_predictions'], axis=1)
@@ -150,24 +167,6 @@ metrics_chart_alt = alt.Chart(metrics_df).transform_fold(
     height=200
 )
 metrics_chart.altair_chart(metrics_chart_alt)
-
-# Mostrar gráfica de evaluación para los resultados, se eliminan las columnas de métricas
-results_df = evaluation_df.drop(['precision', 'recall', 'f1'], axis=1)
-st.subheader('Gráfico de barras agrupadas para frecuencias de resultados')
-results_chart = st.empty()
-results_chart_alt = alt.Chart(results_df).transform_fold(
-    ['correct_predictions', 'missed_predictions', 'false_predictions'],
-    as_=['result', 'value']
-).mark_bar().encode(
-    x=alt.X('result:N', axis=alt.Axis(title='Abstract ID')),
-    y=alt.Y('value:Q', axis=alt.Axis(title='Valor')),
-    color=alt.Color('result:N', legend=alt.Legend(title='Resultado')),
-    column=alt.Column('abstract_id:N', header=alt.Header(labelOrient='bottom', title='Abstract ID'))
-).properties(
-    width=50,
-    height=200
-)
-results_chart.altair_chart(results_chart_alt)
 
 st.subheader('Gráfico de dona para promedio de estadísticas')
 # Grafico de dona de recall

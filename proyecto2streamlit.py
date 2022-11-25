@@ -17,9 +17,6 @@ import en_ner_bionlp13cg_md
 from collections import OrderedDict
 from pprint import pprint
 
-# Data Visualization
-import matplotlib.pyplot as plt
-
 # surpress warnings
 import warnings
 warnings.filterwarnings('ignore')
